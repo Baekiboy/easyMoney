@@ -16,16 +16,28 @@ class usersSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('users')->insert([
+        $user=User::create([
             'email' => 'john@doe.com',
             'username'=>'baki123',
-            'password' => Hash::make('password')
+            'password' => Hash::make('password'),
+            'phone'=>'1'
         ]);
         $admin=User::create([
                 'email' => 'admin@admin.com',
                 'username' => 'admin123',
-                'password' => Hash::make('password')
+                'password' => Hash::make('password'),
+                'phone'=>'2'
             ]);
+        $user->card()->create([
+            'number'=>'515616651',
+            'cvv'=>'61',
+            'amount'=>65651
+        ]);
+        $admin->card()->create([
+            'number'=>'56841516651',
+            'cvv'=>'610',
+            'amount'=>655651
+        ]);
         $admin->assignRole('admin');
 
     }

@@ -15,6 +15,13 @@ class CreateTransactionsTable extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('card_id');
+            $table->unsignedBigInteger('reciever_id');
+            $table->double('amount');
+            $table->string('status');
+            $table->integer('verification_number');
+            $table->foreign('card_id')->references('id')->on('cards')->onDelete('cascade');
+            $table->foreign('reciever_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

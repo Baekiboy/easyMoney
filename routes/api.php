@@ -33,6 +33,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::get('/card/create', [cardConroller::class, 'make_card']);
     Route::get('/card/fetch', [cardConroller::class, 'card']);
     Route::post('/card/convert', [cardConroller::class, 'conversion']);
+    Route::post('/card/transfer', [cardConroller::class, 'transfer']);
+    Route::post('/card/make_transfer', [cardConroller::class, 'make_transfer']);
+
     Route::get('/users', [AdminController::class, 'users']);
     Route::post('/user', [AdminController::class, 'user']);
     Route::post('/user/verify', [AdminController::class, 'verify']);

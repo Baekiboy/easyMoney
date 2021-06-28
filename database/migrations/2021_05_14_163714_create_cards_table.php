@@ -17,8 +17,8 @@ class CreateCardsTable extends Migration
             $table->id();
             $table->string('number')->unique();
             $table->string('cvv');
-            $table->bigInteger('amount');
-            $table->timestamp('exp_date');
+            $table->bigInteger('amount')->default(1000);
+            $table->date('exp_date');
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

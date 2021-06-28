@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
-
+use Illuminate\Contracts\Auth\CanResetPassword;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable, HasApiTokens,HasRoles;
@@ -50,6 +50,10 @@ class User extends Authenticatable
 
     public function card(){
         return $this->hasOne(Card::class);
+    }
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 
 

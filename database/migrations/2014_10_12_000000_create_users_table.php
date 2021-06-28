@@ -4,6 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+use function GuzzleHttp\default_user_agent;
+
 class CreateUsersTable extends Migration
 {
     /**
@@ -19,16 +21,14 @@ class CreateUsersTable extends Migration
             $table->string('last_name')->nullable();
             $table->string('username')->unique();
             $table->string('email')->unique();
-
+            $table->boolean('verified')->default(0);
+            $table->boolean('doc_verified')->default(0);
             $table->date('birthday')->nullable();
             $table->string('country')->nullable();
             $table->char('gender')->nullable();
             $table->string('address')->nullable();
             $table->string('phone')->nullable();
-
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->rememberToken();
             $table->timestamps();
         });
     }

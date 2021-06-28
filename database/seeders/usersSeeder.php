@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
 use App\Models\User;
+use Carbon\Carbon;
+
 class usersSeeder extends Seeder
 {
     /**
@@ -31,12 +33,14 @@ class usersSeeder extends Seeder
         $user->card()->create([
             'number'=>'515616651',
             'cvv'=>'61',
-            'amount'=>65651
+            'amount'=>65651,
+            'exp_date'=>Carbon::now()->addYear(3)
         ]);
         $admin->card()->create([
             'number'=>'56841516651',
             'cvv'=>'610',
-            'amount'=>655651
+            'amount'=>655651,
+            'exp_date'=>Carbon::now()->addYear(3)
         ]);
         $admin->assignRole('admin');
 

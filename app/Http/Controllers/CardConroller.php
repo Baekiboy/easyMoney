@@ -23,7 +23,7 @@ class CardConroller extends Controller
     {
         $card = Auth::user()->card;
         if (!$card) {
-            return response()->json(['message' => 'no card']);
+            return response()->json(['message' => 'no card'],404);
         }
         return $card;
     }
@@ -32,16 +32,16 @@ class CardConroller extends Controller
     {
         $user = Auth::user();
         if ($user->card()->exists()) {
-            return response('card already exists', 201);
+            return response('card already exists', 409);
         }
         $faker = Faker::create();
         $number = '4' . $faker->numerify('###############');
         $cvv = $faker->numerify('###');
         $card = new Card([
-            'number' => $number, 'cvv' => $cvv, 'exp_date' => Carbon::now()->addYears(3)
+            'number' => $number, 'cvv' => $cvv, 'exp_date' => Carbon::now()->addYears(3)->toDateString()
         ]);
         $user->card()->save($card);
-        return response('success', 201);
+        return response()->json(['card'=>$card,'message'=>'success']);
     }
 
     function conversion(Request $request)
@@ -65,7 +65,7 @@ class CardConroller extends Controller
             'status' => 'pending',
             'verification_number' => rand(100, 999)
         ]);
-        Mail::to($reciever)->send(new TransferVerification($transaction));
+        Mail::to($reciever)->queue(new TransferVerification($transaction));
         return response()->json(['message' => 'email sent', 'transaction' => $transaction]);
         // $card->amount-=$amount;
         // $card->save();
@@ -84,9 +84,18 @@ class CardConroller extends Controller
     {
         $user = Auth::user();
         $transaction = Transaction::find($req->transaction_id);
+        $card = $user->card;
+        if ($card->id != $transaction->card_id) {
+            return abort(401);
+        }
+        if ($transaction->status === 'completed') {
+            return response('The Transaction is already closed', 405);
+        }
         if ($transaction->verification_number == $req->verification_number) {
-            $card = $user->card;
             $amount = $transaction->amount;
+            if ($card->amount < $amount) {
+                return response('Insuffisant funds', 405);
+            }
             $card->amount -= $amount;
             $card->save();
             $reciever = User::find($transaction->reciever_id);
@@ -94,6 +103,8 @@ class CardConroller extends Controller
             $reciver_card->amount += $amount;
             $reciver_card->save();
             $card->save();
+            $transaction->status = 'completed';
+            $transaction->save();
 
             return response('done', 201);
         }

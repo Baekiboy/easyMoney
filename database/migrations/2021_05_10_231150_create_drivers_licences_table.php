@@ -17,7 +17,8 @@ class CreateDriversLicencesTable extends Migration
             $table->id();
             $table->string('front_photo_path')->nullable();
             $table->string('back_photo_path')->nullable();
-            $table->unsignedBigInteger('user_id')->nullable();
+            $table->unsignedBigInteger('doc_id')->nullable();
+            $table->foreign('doc_id')->references('id')->on('document_ids')->onDelete('cascade');
             $table->timestamps();
         });
     }

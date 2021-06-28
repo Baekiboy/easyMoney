@@ -29,37 +29,35 @@ class ProfileController extends Controller
 
     function doc_verify(Request $request)
     {
+        $user=Auth::user();
+
         $type = $request->type;
+        $user_doc=$user->document_id()->create(['type'=>$type,'status'=>'waiting']);
         try {
-
-            if ($type === 1) {
+            if ($type == 'drivers_licence') {
                 $front_path = $request->file('front_image')->store('public');
                 $back_path = $request->file('back_image')->store('public');
-                DB::table('drivers_licences')->insert([
-                    'user_id' => Auth::user()->id,
+                $user_doc->drivers_licence()->create([
                     'front_photo_path' => $front_path,
                     'back_photo_path' => $back_path
                 ]);
             }
-            if ($type === 3) {
+            if ($type == 'id_card') {
                 $front_path = $request->file('front_image')->store('public');
                 $back_path = $request->file('back_image')->store('public');
-                DB::table('id_cards')->insert([
-                    'user_id' => Auth::user()->id,
+                $user_doc->id_card()->create([
                     'front_photo_path' => $front_path,
                     'back_photo_path' => $back_path
                 ]);
             }
-            if ($type === 2) {
+            if ($type == 'passport') {
                 $path = $request->file('image')->store('public');
-                DB::table('passports')->insert([
-                    'user_id' => Auth::user()->id,
+                $user_doc->passport()->create([
                     'photo_path' => $path,
-
                 ]);
+                return 'a';
             }
-            DB::table('document_ids')->insert(['user_id'=> Auth::user()->id,'type'=>$type,'status'=>'waiting']);
-            return response()->json(['status' => 201, 'message' => 'good']);
+            return response()->json(['status' => 201, 'message' => 'done']);
         } catch (Throwable $th) {
             return response()->json(['status' => 501, 'message' => 'error']);
         }
@@ -67,7 +65,7 @@ class ProfileController extends Controller
 
 
     function current(){
-        return  DB::table('document_ids')->where('user_id', Auth::user()->id)->first();
+        return Auth::user()->document_id;
     }
     function bank_verify(){
 

@@ -5,7 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class passport extends Model
+class Passport extends Model
 {
     use HasFactory;
+    protected $guarded = [];
+
+    public function document(){
+        return $this->belongsTo(document_id::class);
+    }
 }

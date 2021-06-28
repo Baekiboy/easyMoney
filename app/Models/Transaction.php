@@ -12,4 +12,8 @@ class Transaction extends Model
     public function card(){
         return $this->belongsTo(Card::class);
     }
+    public function reciever()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

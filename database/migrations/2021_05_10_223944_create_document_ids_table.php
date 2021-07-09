@@ -17,7 +17,7 @@ class CreateDocumentIdsTable extends Migration
             $table->id();
 
             $table->unsignedBigInteger('user_id');
-            $table->enum('type',['passport','drivers_licence','id_card']);
+            $table->enum('type',['passport', 'driving licence', 'ID card']);
             $table->string('status')->default('pending'); // verified -- pending -- waiting
 
             $table->timestamps();

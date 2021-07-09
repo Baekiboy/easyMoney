@@ -21,8 +21,8 @@ use App\Http\Controllers\AdminController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'index']);
-Route::post('/email/verify/{user}', [AuthController::class, 'verify']);
-Route::post('/forgot-password',[AuthController::class,'reset_email'])->name('password.request');
+Route::post('/email/verify', [AuthController::class, 'verify']);
+Route::post('/forgot_password',[AuthController::class,'reset_email'])->name('password.request');
 Route::post('/password/reset', [AuthController::class, 'reset'])->name('password.reset');
 Route::group(['middleware' => 'auth:sanctum'], function () {
 
@@ -32,9 +32,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::post('/verify/docs', [ProfileController::class, 'doc_verify']);
     Route::post('/bank/account', [ProfileController::class, 'bank_verify']);
     Route::get('/verified', [ProfileController::class, 'current']);
+    Route::post('/change_username', [ProfileController::class, 'change_username']);
+    Route::post('/change_email', [ProfileController::class, 'change_email']);
+    Route::post('/change_password', [ProfileController::class, 'change_password']);
+
 
 
     Route::prefix('card')->group(function () {
+
         Route::get('/create', [cardConroller::class, 'make_card']);
         Route::get('/fetch', [cardConroller::class, 'card']);
         Route::post('/convert', [cardConroller::class, 'conversion']);
@@ -42,6 +47,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('/make_transfer', [cardConroller::class, 'make_transfer']);
     });
 
+    Route::get('/history', [cardConroller::class, 'history']);
     Route::get('/users', [AdminController::class, 'users']);
     Route::post('/user', [AdminController::class, 'user']);
     Route::post('/user/verify', [AdminController::class, 'verify']);

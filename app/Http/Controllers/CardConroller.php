@@ -53,7 +53,11 @@ class CardConroller extends Controller
 
     function transfer(Request $req)
     {
-        $card = Auth::user()->card;
+        $user=Auth::user();
+        $card = $user->card;
+        if(!$card){
+            return response('no card',200);
+        }
         $amount = $req->amount;
         if ($card->amount < $amount) {
             return response('not enough', 405);
@@ -66,7 +70,7 @@ class CardConroller extends Controller
             'verification_number' => rand(100, 999)
         ]);
         Mail::to($reciever)->queue(new TransferVerification($transaction));
-        return response()->json(['message' => 'email sent', 'transaction' => $transaction]);
+        return response()->json(['message' => 'email sent', 'transaction' => $transaction],201);
         // $card->amount-=$amount;
         // $card->save();
         // $reciver_card=$reciever->card;
@@ -109,5 +113,14 @@ class CardConroller extends Controller
             return response('done', 201);
         }
         return response('wrong verification code', 405);
+    }
+
+
+    function history(){
+        $user=Auth::user();
+        $transactions= $user->card->transactions->load('reciever:phone,id');
+        $recieved=$user->transactions->load('card.user:id,phone');
+        return response()->json(['transactions'=>$transactions,'recieved'=>$recieved]);
+
     }
 }

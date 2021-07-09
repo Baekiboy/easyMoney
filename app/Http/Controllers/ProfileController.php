@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Throwable;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -21,7 +23,7 @@ class ProfileController extends Controller
             $user->address = $request->address;
             $user->phone = $request->phone;
             $user->save();
-            return response()->json(['status' => 'true', 'message' => 'user updated successfully']);
+            return response()->json(['status' => 'true', 'message' => 'user updated successfully', 'user' => $user]);
         } catch (Throwable $th) {
             return   response()->json(['status' => 'false', 'message' => 'error'], 501);
         }
@@ -29,12 +31,11 @@ class ProfileController extends Controller
 
     function doc_verify(Request $request)
     {
-        $user=Auth::user();
-
+        $user = Auth::user();
         $type = $request->type;
-        $user_doc=$user->document_id()->create(['type'=>$type,'status'=>'waiting']);
+        $user_doc = $user->document_id()->create(['type' => $type, 'status' => 'waiting']);
         try {
-            if ($type == 'drivers_licence') {
+            if ($type == 'driving licence') {
                 $front_path = $request->file('front_image')->store('public');
                 $back_path = $request->file('back_image')->store('public');
                 $user_doc->drivers_licence()->create([
@@ -42,7 +43,7 @@ class ProfileController extends Controller
                     'back_photo_path' => $back_path
                 ]);
             }
-            if ($type == 'id_card') {
+            if ($type == 'ID card') {
                 $front_path = $request->file('front_image')->store('public');
                 $back_path = $request->file('back_image')->store('public');
                 $user_doc->id_card()->create([
@@ -55,7 +56,6 @@ class ProfileController extends Controller
                 $user_doc->passport()->create([
                     'photo_path' => $path,
                 ]);
-                return 'a';
             }
             return response()->json(['status' => 201, 'message' => 'done']);
         } catch (Throwable $th) {
@@ -64,10 +64,62 @@ class ProfileController extends Controller
     }
 
 
-    function current(){
+    function current()
+    {
         return Auth::user()->document_id;
     }
-    function bank_verify(){
+    function bank_verify()
+    {
+    }
+    function change_username(Request $req)
+    {
+        $validator = Validator::make($req->all(), [
+            'username' => 'required|unique:users'
+        ])->validate();
 
+        $user  = Auth::user();
+        try {
+            $user->username = $req->username;
+            $user->save();
+            return response('done');
+        } catch (Throwable $th) {
+            return response($th);
+        }
+    }
+    function change_email(Request $req)
+    {
+        $validator = Validator::make($req->all(), [
+            'last_email' => 'required',
+            'email' => 'required|unique:users'
+        ])->validate();
+
+        $user  = Auth::user();
+        if ($user->email != $req->last_email) {
+            return abort(401);
+        }
+
+        try {
+            $user->email = $req->email;
+            $user->save();
+            return response('done');
+        } catch (Throwable $th) {
+            return response($th);
+        }
+    }
+    function change_password(Request $req)
+    {
+        $validator = Validator::make($req->all(), [
+            'password' => 'password|required',
+            'new_password' => 'required|confirmed'
+        ])->validate();
+
+        $user  = Auth::user();
+        try {
+            $user->password = Hash::make($req->new_password);
+            $user->save();
+            return response('done');
+        } catch (Throwable $th) {
+            return response($th);
+        }
     }
 }

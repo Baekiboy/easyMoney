@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Validator;
 use Throwable;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Password;
-
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Str;
 class AuthController extends Controller
 {
 
@@ -58,29 +59,53 @@ class AuthController extends Controller
                 'username' => $request->username,
                 'password' => Hash::make($request->password),
             ]);
-            Mail::to($user)->send(new EmailVerification($user));
+            Mail::to($user)->queue(new EmailVerification($user));
             return response()->json(['status' => 'true', 'message' => 'user created successfully']);
         } catch (Throwable $e) {
             return   response()->json(['status' => 'false', 'message' => 'error'], 501);
         }
     }
-    function verify(User $user){
+    function verify(Request $req){
+        $user=User::find($req->id);
         if($user){
-            $user->verified=0;
+            $user->verified=1;
             $user->save();
-            return redirect('http://127.0.0.1:3000/');
+            return response('done');
         }
     }
 
     function reset_email(Request $request){
         $validator = Validator::make($request->all(), [
-            'email' => 'required|unique:users',
-        ]);
+            'email' => 'required',
+        ])->validate();
         $status= Password::sendResetLink($request->only('email'));
         return $status ;
     }
-    function reset(){
-        return redirect('http://127.0.0.1:5500/');
+    function reset(Request $request){
+
+       $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
+
+    $status = Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user, $password) {
+            $user->forceFill([
+                'password' => Hash::make($password)
+            ])->setRememberToken(Str::random(60));
+
+            $user->save();
+
+            event(new PasswordReset($user));
+        }
+    );
+
+    return
+        $status === Password::PASSWORD_RESET
+            ? response('done',200)
+            : response('error',405);
     }
 
 }

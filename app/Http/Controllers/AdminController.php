@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -53,4 +54,46 @@ class AdminController extends Controller
             return $th;
         }
     }
+    function users_list(){
+        $users=User::all();
+        return view('admin.home',compact('users'));
+    }
+
+    function waiting_users(){
+        $users=User::whereHas('document_id', function (Builder $query) {
+            $query->where('status',  'like','waiting');
+        })->get();
+
+        return view("admin.waiting",compact('users'));
+    }
+    function accept_user($id){
+        try{
+            $user=User::findOrFail($id);
+            $doc=$user->document_id;
+            $doc->status='completed';
+            $user->doc_verified=1;
+            $user->save();
+            $doc->save();
+            return redirect('/waiting');
+        }catch(Throwable $th){
+            return
+            redirect('/waiting');
+
+        }
+
+    }
+    function refuse_user($id){
+        try{
+            $user=User::findOrFail($id);
+            $doc=$user->document_id;
+            $doc->status='refused';
+            $doc->save();
+            return response('done',201);
+        }catch(Throwable $th){
+            return response('error',405);
+
+        }
+
+    }
+
 }

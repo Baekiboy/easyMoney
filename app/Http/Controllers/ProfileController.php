@@ -28,7 +28,9 @@ class ProfileController extends Controller
             return   response()->json(['status' => 'false', 'message' => 'error'], 501);
         }
     }
-
+    function current_user(){
+        return Auth::user();
+    }
     function doc_verify(Request $request)
     {
         $user = Auth::user();

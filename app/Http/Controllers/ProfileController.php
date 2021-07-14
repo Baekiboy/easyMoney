@@ -91,12 +91,12 @@ class ProfileController extends Controller
     function change_email(Request $req)
     {
         $validator = Validator::make($req->all(), [
-            'last_email' => 'required',
+            'password' => 'required',
             'email' => 'required|unique:users'
         ])->validate();
 
         $user  = Auth::user();
-        if ($user->email != $req->last_email) {
+        if (Hash::check($req->password, $user->password)) {
             return abort(401);
         }
 

@@ -22,9 +22,9 @@ class CardConroller extends Controller
     function card()
     {
         $card = Auth::user()->card;
-        if (!$card) {
-            return response()->json(['message' => 'no card'],404);
-        }
+        // if (!$card) {
+        //     return response()->json(['message' => 'no card'],404);
+        // }
         return $card;
     }
 
@@ -56,13 +56,16 @@ class CardConroller extends Controller
         $user=Auth::user();
         $card = $user->card;
         if(!$card){
-            return response('no card',200);
+            return response('no card',405);
         }
         $amount = $req->amount;
         if ($card->amount < $amount) {
-            return response('not enough', 405);
+            return response('not enough money', 405);
         }
         $reciever = User::where('phone', $req->phone)->firstOrFail();
+        if($reciever->id===$user->id){
+            return response('not implemented', 405);
+        }
         $transaction = $card->transactions()->create([
             'reciever_id' => $reciever->id,
             'amount' => $amount,
@@ -71,18 +74,7 @@ class CardConroller extends Controller
         ]);
         Mail::to($reciever)->queue(new TransferVerification($transaction));
         return response()->json(['message' => 'email sent', 'transaction' => $transaction],201);
-        // $card->amount-=$amount;
-        // $card->save();
-        // $reciver_card=$reciever->card;
-        // $reciver_card->amount+=$amount;
-        // $card->transactions()->create([
-        //     'reciever_id'=>$reciever->id,
-        //     'amount'=>$amount
-        // ]);
-        // $reciver_card->save();
-        // $card->save();
 
-        // return response('done',201);
     }
     function make_transfer(Request $req)
     {
@@ -104,7 +96,7 @@ class CardConroller extends Controller
             $card->save();
             $reciever = User::find($transaction->reciever_id);
             $reciver_card = $reciever->card;
-            $reciver_card->amount += $amount;
+            $reciver_card->amount = $reciver_card->amount+ $amount;
             $reciver_card->save();
             $card->save();
             $transaction->status = 'completed';

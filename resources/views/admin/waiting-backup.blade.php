@@ -1,3 +1,6 @@
+<?php
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,10 +21,10 @@
         rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="{{ asset('css/sb-admin-2.min.css') }}" rel="stylesheet">
+    <link href="css/sb-admin-2.min.css" rel="stylesheet">
 
     <!-- Custom styles for this page -->
-    <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
+    <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
 
 </head>
 
@@ -34,7 +37,7 @@
         <ul class="navbar-nav bg-gradient-warning sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="/">
+            <a class="sidebar-brand d-flex align-items-center justify-content-center" href="home.html">
 
                 <div class="sidebar-brand-text mx-3">Admin </div>
             </a>
@@ -69,12 +72,12 @@
 
             <!-- Nav Item - Tables -->
             <li class="nav-item active">
-                <a class="nav-link" href="/">
+                <a class="nav-link" href="home.php">
                     <i class="fas fa-fw fa-table"></i>
                     <span>User list</span></a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="waiting">
+                <a class="nav-link" href="waiting.php">
                     <i class="fas fa-fw fa-table"></i>
                     <span>Waiting list</span></a>
             </li>
@@ -87,7 +90,7 @@
 
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="index.html">
+                <a class="nav-link collapsed" href="index.php">
                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                     Logout
                 </a>
@@ -126,7 +129,7 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">DataTables </h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Waiting List </h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -189,7 +192,7 @@
                                                                         alt="Card image cap">
                                                                     </div>
                                                                 </div>
-                                                                @elseif ($user->document_id->type=="ID card")
+                                                                @elseif ($user->document_id->type=="id_card")
 
                                                                 <div class="modal-body">
                                                                     <div class="card" style="width: 18rem;">
@@ -206,7 +209,7 @@
                                                                             alt="Card image cap">
                                                                     </div>
                                                                 </div>
-                                                                @elseif ($user->document_id->type=="driving licence")
+                                                                @elseif ($user->document_id->type=="drivers_licence")
                                                                     <div class="modal-body">
                                                                     <div class="card" style="width: 18rem;">
                                                                         <img class="card-img-top"
@@ -308,21 +311,21 @@
     </div>
 
     <!-- Bootstrap core JavaScript-->
-    <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
-    <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="vendor/jquery/jquery.min.js"></script>
+    <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
 
     <!-- Core plugin JavaScript-->
-    <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
+    <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
 
     <!-- Custom scripts for all pages-->
-    <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+    <script src="js/sb-admin-2.min.js"></script>
 
     <!-- Page level plugins -->
-    <script src="{{ asset('vendor/datatables/jquery.dataTables.min.js') }}"></script>
-    <script src="{{ asset('vendor/datatables/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <script src="{{ asset('js/demo/datatables-demo.js') }}"></script>
+    <script src="js/demo/datatables-demo.js"></script>
 
 </body>
 

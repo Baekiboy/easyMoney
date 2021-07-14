@@ -62,8 +62,8 @@ class AdminController extends Controller
     function waiting_users(){
         $users=User::whereHas('document_id', function (Builder $query) {
             $query->where('status',  'like','waiting');
-        })->get();
-
+        })->with(['document_id','document_id.passport', 'document_id.id_card', 'document_id.drivers_licence'])->get();
+        // return $users;
         return view("admin.waiting",compact('users'));
     }
     function accept_user($id){
@@ -88,7 +88,7 @@ class AdminController extends Controller
             $doc=$user->document_id;
             $doc->status='refused';
             $doc->save();
-            return response('done',201);
+            return redirect('/waiting');
         }catch(Throwable $th){
             return response('error',405);
 
